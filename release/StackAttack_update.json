@@ -1,0 +1,17 @@
+{
+  "format": 1,
+  "bootstrap": 1,
+  "version": "0.17.0",
+  "archive": "StackAttack_0_17_0_update.zip",
+  "size": 8365189,
+  "sha256": "66b49b5c4557577c838833b573fba6bda5586fcdf0a8d391a2818bfc41dd0c73",
+  "python_min": [
+    3,
+    9
+  ],
+  "python_max": [
+    3,
+    13
+  ],
+  "pygame": "2.6.1"
+}

@@ -1,0 +1,33 @@
+name: Publish verified update
+on:
+  push:
+    branches: [main]
+    paths: ['release/**', 'publish.py', '.github/workflows/publish.yml']
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: publish-update
+  cancel-in-progress: false
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Validate runtime package
+        run: python publish.py
+      - name: Publish complete release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          tag="v$(python -c 'import json; print(json.load(open("release/StackAttack_update.json"))["version"])')"
+          if gh release view "$tag" >/dev/null 2>&1; then
+            echo "Release $tag already exists. Use a new version for changed packages."
+            exit 1
+          fi
+          gh release create "$tag" dist/* --draft --title "Stack Attack $tag" --notes 'Runtime-only update. Preserves your existing music and settings. Install through Settings > System > Game updates. Requires the complete 0.17 or newer source installation.'
+          gh release edit "$tag" --draft=false --latest
